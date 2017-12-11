@@ -31,19 +31,15 @@ public class Parser {
 		
 		tokenizer.close();
 		
-		
 	     if(commands.isCommand(word1)) {
 	            return new Command(word1, word2);
 	     } else {
-	            return new Command(null, word2); 
+	            return new Command(null, word2);
 	     }
 	}
 	
 	public void showCommands() {
-		commands.showAll();
-	}
-	
-	public void showDirections() {
+		commands.showAllCommands();
 		commands.showAllDirections();
 	}
-} //This class is bummed from Mehrab
+}

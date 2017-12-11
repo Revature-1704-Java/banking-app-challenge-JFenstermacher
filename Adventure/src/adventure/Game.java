@@ -1,21 +1,43 @@
 package adventure;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.ArrayList;
+import java.util.Scanner;
+
 public class Game {
 	private Parser parser;
-	private Room[] rooms = new Room[7];
-	private Map map = new Map();
-	private Hero you;
+	private ArrayList<Room> rooms;
+	private Map map;
+	private Hero hero;
 	
 	public static void main(String[] args) {
 		Game game = new Game();
+		
+		
+		//game.readRoomsFromFile();
+		//game.saveRooms();
+		game.loadRooms();
+		//game.printRooms();
+		//game.saveHero();
+		//game.saveMap();
+		//game.loadMap();
+		//game.loadHero();
 		
 		game.play();
 	}
 	
 	public Game() {
-		createRooms();
+		rooms = new ArrayList<>();
 		parser = new Parser();
-		you = new Hero(4, 1);
+		hero = new Hero((short) 4, (short) 1);
+		map = new Map();
 	}
 	
 	public void play(){
@@ -37,30 +59,105 @@ public class Game {
 		System.out.println("Good luck adventurer!");
 	}
 	
-	private void createRooms(){
-		for (int i = 0; i < 7; i++) {
-			rooms[i] = new Room();
+	private void readRoomsFromFile(){
+		try {
+			Scanner sc = new Scanner(new FileReader("C:\\Users\\JFens\\Programs\\Core\\Adventure\\src\\read\\rooms.txt"));
+			int roomCount = sc.nextInt();
+			
+			for (int i = 0; i < roomCount; i++) {
+				Room tmp = new Room();
+				int descCount = sc.nextInt();
+				sc.nextLine();
+				for (int j = 0; j < descCount; j++) {
+					String desc = sc.nextLine();
+					tmp.addMoveDesc(desc);
+				}
+				descCount = sc.nextInt();
+				sc.nextLine();
+				for (int j = 0; j < descCount; j++) {
+					String desc = sc.nextLine();
+					tmp.addLookDesc(desc);
+				}
+				
+				rooms.add(tmp);
+			}
+			
+			sc.close();
+		} catch (Exception ex) {
+			ex.printStackTrace();
 		}
-		rooms[0].setMoveDesc("You bump into a locked porty-potty. Maybe you should look before you move next time...");
-		rooms[0].setLookDesc("Looks to be a locked porty-potty.");
-		
-		rooms[1].setMoveDesc("You moved into an empty hallway square.");
-		rooms[1].setLookDesc("Looks to be an empty hallway square (the sort you can move into).");
-		
-		rooms[2].setMoveDesc("Porty-potties are usually for one. Would you really want do this, wierdo?");
-		rooms[2].setLookDesc("The porty-potty door is open. There's a man passed out in a rabbit costume.");
-		
-		rooms[3].setMoveDesc("You stumble back out of the porty-potty. The putrid smell has made you dizzy.");
-		rooms[3].setLookDesc("You open the door of the porty-potty before you. Every bare surface of this porty-potty is covered in feces.");
-		
-		rooms[4].setMoveDesc("You open the door and attempt to step inside the porty potty with her. She cases you away, and you're returned back to where you started. Well deserved, pervert.");
-		rooms[4].setLookDesc("You open the door of the porty-potty before you. Angry eyes and a quick handed coverup greet you, there's a woman in the stall. You quickly close the door.");
-		
-		rooms[5].setMoveDesc("You retrieve your phone, and step back out.");
-		rooms[5].setLookDesc("You open the door to the porty-potty before you. Before you lies the object of your desire, your phone!");
-		
-		rooms[6].setMoveDesc("FREEDOM!");
-		rooms[6].setLookDesc("The exit from this smelly land lies before you");
+	}
+	
+	private void printFile() {
+		try {
+			Scanner sc = new Scanner(new FileReader("C:\\Users\\JFens\\Programs\\Core\\Adventure\\src\\read\\rooms.txt"));
+			
+			while (sc.hasNext()) {
+				System.out.println(sc.nextLine());
+			}
+			sc.close();
+			//System.out.println("Hello");
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+	}
+	
+	private void printRooms() {
+		for (int i = 0; i < rooms.size(); i++) {
+			System.out.println(rooms.get(i).getLookDesc());
+			System.out.println(rooms.get(i).getMoveDesc());
+		}
+	}
+	
+	private void saveRooms() {
+		try(ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("C:\\Users\\JFens\\Programs\\Core\\Adventure\\src\\read\\roomObjs.txt"))){
+			for (int i = 0; i < rooms.size(); i++) oos.writeObject(rooms.get(i));
+		} catch (Exception ex){
+			ex.printStackTrace();
+		}
+	}
+	
+	private void loadRooms() {
+		try(ObjectInputStream ois = new ObjectInputStream(new FileInputStream("C:\\Users\\JFens\\Programs\\Core\\Adventure\\src\\read\\roomObjs.txt"))){
+			while (true) { 
+				Room room = (Room) ois.readObject();
+				rooms.add(room);
+			}
+		}catch (Exception ex){
+			//ex.printStackTrace();
+		}
+	}
+	
+	private void saveMap() {
+		try(ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("C:\\Users\\JFens\\Programs\\Core\\Adventure\\src\\read\\mapObj.txt"))){
+			oos.writeObject(map);
+		} catch (Exception ex){
+			ex.printStackTrace();
+		}
+	}
+	
+	private void loadMap() {
+		try(ObjectInputStream ois = new ObjectInputStream(new FileInputStream("C:\\Users\\JFens\\Programs\\Core\\Adventure\\src\\read\\mapObj.txt"))){
+			map = (Map) ois.readObject();
+		}catch (Exception ex){
+			ex.printStackTrace();
+		}
+	}
+	
+	private void saveHero() {
+		try(ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("C:\\Users\\JFens\\Programs\\Core\\Adventure\\src\\read\\heroObj.txt"))){
+			oos.writeObject(hero);
+		} catch (Exception ex){
+			ex.printStackTrace();
+		}
+	}
+	
+	private void loadHero() {
+		try(ObjectInputStream ois = new ObjectInputStream(new FileInputStream("C:\\Users\\JFens\\Programs\\Core\\Adventure\\src\\read\\heroObj.txt"))){
+			hero = (Hero) ois.readObject();
+		}catch (Exception ex){
+			ex.printStackTrace();
+		}
 	}
 	
 	private boolean processCommand (Command command) {
@@ -73,25 +170,98 @@ public class Game {
 		
 		String commandWord = command.getCommandWord();
 		
+		short heroRow = hero.getRow(), heroCol = hero.getCol();
+
 		if (commandWord.equals("move")) {
-			String dir = command.getSecondWord();
-			if (dir.equals("up")) winFlag = you.getDizzyState() ? you.moveDown(map, rooms) : you.moveUp(map, rooms);
-			else if (dir.equals("down")) winFlag = you.getDizzyState() ? you.moveUp(map, rooms) : you.moveDown(map,  rooms);
-			else if (dir.equals("left")) winFlag = you.getDizzyState() ? you.moveRight(map, rooms) : you.moveLeft(map, rooms);
-			else if (dir.equals("right")) winFlag = you.getDizzyState() ? you.moveLeft(map, rooms) : you.moveRight(map, rooms);
-			else System.out.println("You went nowhere, that wasn't an appropriate direction.");
+			String direction = command.getSecondWord();
+			switch (direction) {
+				case "up" :
+					if (hero.getDizzyState()) {
+						short down = map.checkDown(heroRow, heroCol);
+						winFlag = hero.moveDown(down, rooms.get(down));
+					} else {
+						short up = map.checkUp(heroRow, heroCol);
+						winFlag = hero.moveUp(up, rooms.get(up));
+					}
+					break;
+				case "down" :
+					if (hero.getDizzyState()) {
+						short up = map.checkUp(heroRow, heroCol);
+						winFlag = hero.moveUp(up, rooms.get(up));
+					} else {
+						short down = map.checkDown(heroRow, heroCol);
+						winFlag = hero.moveDown(down, rooms.get(down));
+					}
+					break;
+				case "left" :
+					if (hero.getDizzyState()) {
+						short right = map.checkRight(heroRow, heroCol);
+						winFlag = hero.moveRight(right, rooms.get(right));
+					} else {
+						short left = map.checkLeft(heroRow, heroCol);
+						winFlag = hero.moveLeft(left, rooms.get(left));
+					}
+					break;
+				case "right" :
+					if (hero.getDizzyState()) {
+						short left = map.checkLeft(heroRow, heroCol);
+						winFlag = hero.moveLeft(left, rooms.get(left));
+					} else {
+						short right = map.checkRight(heroRow, heroCol);
+						winFlag = hero.moveRight(right, rooms.get(right));
+					}
+					break;
+				default :
+					System.out.println("You moved which way?");
+					break;
+			}
 			
 		} else if (commandWord.equals("look")) {
-			String dir = command.getSecondWord();
-			if (dir.equals("up")) you.lookUp(map, rooms);
-			else if (dir.equals("down")) you.lookDown(map,  rooms);
-			else if (dir.equals("left")) you.lookLeft(map, rooms);
-			else if (dir.equals("right")) you.lookRight(map, rooms);
-			else System.out.println("I don't know what that means boss.");
+			String direction = command.getSecondWord();
+			switch (direction) {
+				case "up" :
+					if (hero.getDizzyState()) { 
+						short down = map.checkDown(heroRow, heroCol);
+						hero.look(down, rooms.get(down));
+					} else { 
+						short up = map.checkUp(heroRow, heroCol);
+						hero.look(up, rooms.get(up));
+					}
+					break;
+				case "down" :
+					if (hero.getDizzyState()) {
+						short up = map.checkUp(heroRow, heroCol);
+						hero.look(up, rooms.get(up));
+					} else {
+						short down = map.checkDown(heroRow, heroCol);
+						hero.look(down, rooms.get(down));
+					}
+					break;
+				case "left" :
+					if (hero.getDizzyState()) {
+						short right = map.checkRight(heroRow, heroCol);
+						hero.look(right, rooms.get(right)); 
+					} else { 
+						short left = map.checkLeft(heroRow, heroCol);
+						hero.look(left, rooms.get(left));
+					}
+					break;
+				case "right" :
+					if (hero.getDizzyState()) { 
+						short left = map.checkLeft(heroRow, heroCol);
+						hero.look(left, rooms.get(left));
+					} else{
+						short right = map.checkRight(heroRow, heroCol);
+						hero.look(right, rooms.get(right));
+					}
+					break;
+				default : 
+					System.out.println("You looked where?");
+			}
 		} else if (commandWord.equals("help")) {
 			printHelp();
 		} else if (commandWord.equals("print")) {
-			map.printVisited(you.getPosR(), you.getPosC());
+			map.printVisited(hero.getRow(), hero.getCol());
 		} else return true;
 		
 		return winFlag ? true : false;
@@ -102,6 +272,5 @@ public class Game {
 		System.out.println("The clouds begin to move, and they arrange themselves in a set of words.");
 		System.out.println();
 		parser.showCommands();
-		parser.showDirections();
 	}
 }

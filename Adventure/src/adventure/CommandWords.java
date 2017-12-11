@@ -1,44 +1,31 @@
 package adventure;
 
-public class CommandWords {
-	private static final String[] validCommands = { "move", "look", "quit", "help", "print" };
-	
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
-	private static final String[] validDirections = { "up", "down", "left", "right" };
+public class CommandWords {
+	
+	private static final Set<String> validCommands = new HashSet<>(Arrays.asList("move", "look", "quit", "help", "print"));
+	private static final Set<String> validDirections = new HashSet<>(Arrays.asList("up", "down", "left", "right"));
 	
 	public CommandWords() { }
 	
 	public boolean isCommand(String aString) {
-		for (int i = 0 ; i < validCommands.length; i++) {
-			if (validCommands[i].equals(aString)) return true;
-		}
-		
-		return false;
+		return validCommands.contains(aString);
 	}
 	
 	public boolean isDirection(String bString) {
-		for (int i = 0; i < validDirections.length; i++) {
-			if (validDirections[i].equals(bString)) return true;
-		}
-		
-		return false;
+		return validDirections.contains(bString);
 	}
 	
-	public void showAll() {
+	public void showAllCommands() {
 		System.out.print("Valid commands : ");
-		for (String command : validCommands) {
-			System.out.print(command + " ");
-		}
-		
-		System.out.println();
+		System.out.println(validCommands);
 	}
 	
 	public void showAllDirections() {
 		System.out.print("Valid directions : ");
-		for (String dir : validDirections) {
-			System.out.print(dir + " ");
-		}
-		
-		System.out.println();
+		System.out.println(validDirections);
 	}
-} //This is bummed from Mehrab
+}

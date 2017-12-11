@@ -1,192 +1,120 @@
 package adventure;
 
-public class Hero {
-	private int posR;
-	private int posC;
-	private boolean hasPhone;
-	private boolean isDizzy;
+import java.io.Serializable;
+
+public class Hero implements Serializable{
+	private static final long serialVersionUID = 1L;
+	private short row;
+	private short col;
+	private boolean hasPhone, isDizzy, isConfused;
 	
 	public Hero() {}
 	
-	public Hero(int row, int col){
-		posR = row;
-		posC = col;
-		isDizzy = false;
+	public Hero(short row, short col){
+		this.row = row;
+		this.col = col;
 	}
 	
-	public int getPosR() {
-		return posR;
+	public short getRow() {
+		return row;
 	}
 	
-	public int getPosC() {
-		return posC;
+	public short getCol() {
+		return col;
 	}
 	
 	public boolean getDizzyState() {
 		return isDizzy;
 	}
 	
-	public boolean moveUp(Map m, Room[] rooms){
-		int locInfo = m.checkUp(posR, posC);
+	public boolean getPhoneState() {
+		return hasPhone;
+	}
+	
+	public boolean isConfused() {
+		return isConfused;
+	}
+	
+	public boolean moveUp(short locInfo, Room room){
+		boolean winFlag = false;
 		if (locInfo == 1){
 			System.out.println("You moved up one square up in porty-potty maze");
-			posR--;
+			this.row--;
 		} else {
-			m.updateVisited(posR - 1, posC);
-			if (locInfo == 3) {
-				System.out.println(rooms[locInfo].getMoveDesc());
-				isDizzy = true;
-			}
-			else if (locInfo == 4){
-				System.out.println(rooms[locInfo].getMoveDesc());
-				posR = 4;
-				posC = 1;
-			} else if (locInfo == 5) {
-				System.out.println(rooms[locInfo].getMoveDesc());
-				hasPhone = true;
-			} else if (locInfo == 6) {
-				if (hasPhone == true) {
-					System.out.println(rooms[locInfo].getMoveDesc());
-					return true;
-				} else {
-					System.out.println("You forgot your phone! You can't leave yet. (Unless you type QUIT)");
-				}
-			} else {
-				System.out.println(rooms[locInfo].getMoveDesc());
-			}
+			winFlag = interactRoom(locInfo, room);
 		}
 		
-		m.updateVisited(posR, posC);
-		
-		return false;
+		return winFlag;
 	}
 	
-	public boolean moveDown(Map m, Room[] rooms){
-		int locInfo = m.checkDown(posR, posC);
+	public boolean moveDown(short locInfo, Room room){
+		boolean winFlag = false;
 		if (locInfo == 1){
 			System.out.println("You moved down one square up in porty-potty maze");
-			posR++;
+			this.row++;
 		} else {
-			m.updateVisited(posR + 1, posC);
-			if (locInfo == 3) {
-				System.out.println(rooms[locInfo].getMoveDesc());
-				isDizzy = true;
-			}
-			else if (locInfo == 4){
-				System.out.println(rooms[locInfo].getMoveDesc());
-				posR = 4;
-				posC = 1;
-			} else if (locInfo == 5) {
-				System.out.println(rooms[locInfo].getMoveDesc());
-				hasPhone = true;
-			} else if (locInfo == 6) {
-				if (hasPhone == true) {
-					System.out.println(rooms[locInfo].getMoveDesc());
-					return true;
-				} else {
-					System.out.println("You forgot your phone! You can't leave yet. (Unless you type QUIT)");
-				}
-			} else {
-				System.out.println(rooms[locInfo].getMoveDesc());
-			}
+			winFlag = interactRoom(locInfo, room);
 		}
 		
-		m.updateVisited(posR, posC);
-		
-		return false;
+		return winFlag;
 	}
 	
-	public boolean moveLeft(Map m, Room[] rooms){
-		int locInfo = m.checkLeft(posR, posC);
+	public boolean moveLeft(short locInfo, Room room){
+		boolean winFlag = false;
 		if (locInfo == 1){
 			System.out.println("You moved left one square up in porty-potty maze");
-			posC--;
+			this.col--;
 		} else {
-			m.updateVisited(posR, posC - 1);
-			if (locInfo == 3) {
-				System.out.println(rooms[locInfo].getMoveDesc());
-				isDizzy = true;
-			}
-			else if (locInfo == 4){
-				System.out.println(rooms[locInfo].getMoveDesc());
-				posR = 4;
-				posC = 1;
-			} else if (locInfo == 5) {
-				System.out.println(rooms[locInfo].getMoveDesc());
-				hasPhone = true;
-			} else if (locInfo == 6) {
-				if (hasPhone == true) {
-					System.out.println(rooms[locInfo].getMoveDesc());
-					return true;
-				} else {
-					System.out.println("You forgot your phone! You can't leave yet. (Unless you type QUIT)");
-				}
-			} else {
-				System.out.println(rooms[locInfo].getMoveDesc());
-			}
+			winFlag = interactRoom(locInfo, room);
 		}
 		
-		m.updateVisited(posR, posC);
-		
-		return false;
+		return winFlag;
 	}
 	
-	public boolean moveRight(Map m, Room[] rooms){
-		int locInfo = m.checkRight(posR, posC);
+	public boolean moveRight(short locInfo, Room room){
+		boolean winFlag = false;
 		if (locInfo == 1){
 			System.out.println("You moved right one square up in porty-potty maze");
-			posC++;
+			this.col++;
 		} else {
-			m.updateVisited(posR, posC + 1);
-			if (locInfo == 3) {
-				System.out.println(rooms[locInfo].getMoveDesc());
-				isDizzy = true;
-			}
-			else if (locInfo == 4){
-				System.out.println(rooms[locInfo].getMoveDesc());
-				posR = 4;
-				posC = 1;
-			} else if (locInfo == 5) {
-				System.out.println(rooms[locInfo].getMoveDesc());
-				hasPhone = true;
-			} else if (locInfo == 6) {
-				if (hasPhone == true) {
-					System.out.println(rooms[locInfo].getMoveDesc());
-					return true;
+			winFlag = interactRoom(locInfo, room);
+		}
+		
+		return winFlag;
+	}
+	
+	public void look(short locInfo, Room room){
+		System.out.println(room.getLookDesc());
+	}
+	
+	private boolean interactRoom(short locInfo, Room room) {
+		boolean winFlag = false;
+		switch (locInfo) {
+			case 3 : 
+				this.isDizzy = true;
+				System.out.println(room.getMoveDesc());
+				break;
+			case 4 :
+				this.row = 4;
+				this.col = 1;
+				System.out.println(room.getMoveDesc());
+				break;
+			case 5 :
+				this.hasPhone = true;
+				System.out.println(room.getMoveDesc());
+				break;
+			case 6 :
+				if (getPhoneState()) {
+					winFlag = true;
+					System.out.println(room.getMoveDesc());
 				} else {
 					System.out.println("You forgot your phone! You can't leave yet. (Unless you type QUIT)");
 				}
-			} else {
-				System.out.println(rooms[locInfo].getMoveDesc());
-			}
+				break;
+			default :
+				System.out.println(room.getMoveDesc());
 		}
 		
-		m.updateVisited(posR, posC);
-		
-		return false;
-	}
-	
-	public void lookUp(Map m, Room[] rooms){
-		int locInfo = m.checkUp(posR, posC);
-		m.updateVisited(posR - 1, posC);
-		System.out.println(rooms[locInfo].getLookDesc());
-	}
-	
-	public void lookDown(Map m, Room[] rooms){
-		int locInfo = m.checkDown(posR, posC);
-		m.updateVisited(posR + 1, posC);
-		System.out.println(rooms[locInfo].getLookDesc());
-	}
-	
-	public void lookLeft(Map m, Room[] rooms){
-		int locInfo = m.checkLeft(posR, posC);
-		m.updateVisited(posR, posC - 1);
-		System.out.println(rooms[locInfo].getLookDesc());
-	}
-	
-	public void lookRight(Map m, Room[] rooms){
-		int locInfo = m.checkRight(posR, posC);
-		m.updateVisited(posR, posC + 1);
-		System.out.println(rooms[locInfo].getLookDesc());
+		return winFlag;
 	}
 }

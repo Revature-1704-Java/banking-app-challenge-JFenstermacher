@@ -1,7 +1,10 @@
 package adventure;
 
-public class Map {
-	private int[][] map;
+import java.io.Serializable;
+
+public class Map implements Serializable{
+	private static final long serialVersionUID = 1L;
+	private short[][] map;
 	private boolean[][] visited = new boolean[7][5];
 	private int startRow = 4;
 	private int startCol = 1;
@@ -9,7 +12,7 @@ public class Map {
 	public Map(){
 		visited[4][1] = true;
 		
-		int[][] arr = { {0,0,0,6,0}, {0,0,0,1,4}, {0,2,0,1,0}, {3,1,1,1,0}, {0,1,0,1,0}, 
+		short[][] arr = { {0,0,0,6,0}, {0,0,0,1,4}, {0,2,0,1,0}, {3,1,1,1,0}, {0,1,0,1,0}, 
 						{0,0,0,1,0}, {0,0,0,5,0} };
 		
 		map = arr;
@@ -30,23 +33,41 @@ public class Map {
 		sc.close();*/
 	}
 	
-	public int checkLeft(int r, int c){
+	//action boolean is true for looking, false for moving
+	
+	public short checkLeft(short r, short c){
+		short colIndex = (short) (c - 1);
+		
+		updateVisited(r, colIndex);
+		
 		return map[r][c - 1];
 	}
 	
-	public int checkRight(int r, int c){
+	public short checkRight(short r, short c){
+		short colIndex = (short) (c - 1);
+		
+		updateVisited(r, colIndex);
+		
 		return map[r][c + 1];
 	}
 	
-	public int checkUp(int r, int c){
+	public short checkUp(short r, short c){
+		short rowIndex = (short) (r - 1);
+		
+		updateVisited(rowIndex, c);
+		
 		return map[r - 1][c];
 	}
 	
-	public int checkDown(int r, int c){
+	public short checkDown(short r, short c){
+		short rowIndex = (short) (r + 1);
+		
+		updateVisited(rowIndex, c);
+		
 		return map[r + 1][c];
 	}
 	
-	public void updateVisited(int r, int c){
+	public void updateVisited(short r, short c){
 		visited[r][c] = true;
 	}
 	
